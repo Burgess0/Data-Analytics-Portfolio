@@ -1,0 +1,36 @@
+1.创建第一个节点，人物Emil
+CREATE (ee:Person { name: "Emil", from: "Sweden", klout: 99 })
+
+2.查询1创建的节点
+MATCH (ee:Person) WHERE ee.name = "Emil" RETURN ee;
+
+3.创建更多节点和关系
+MATCH (ee:Person) WHERE ee.name = "Emil"
+CREATE (js:Person { name: "Johan", from: "Sweden", learn: "surfing" }),
+(ir:Person { name: "Ian", from: "England", title: "author" }),
+(rvb:Person { name: "Rik", from: "Belgium", pet: "Orval" }),
+(ally:Person { name: "Allison", from: "California", hobby: "surfing" }),
+(ee)-[:KNOWS {since: 2001}]->(js),
+(ee)-[:KNOWS {rating: 5}]->(ir),
+(js)-[:KNOWS]->(ir),
+(js)-[:KNOWS]->(rvb),
+(ir)-[:KNOWS]->(js),
+(ir)-[:KNOWS]->(ally),
+(rvb)-[:KNOWS]->(ally)
+
+4.查询（显示）完整的以上创建的社交图谱（以关系名称KNOWS为查询重心）
+Match p=()-[r:KNOWS]-() return p 
+
+5.查询Emil的朋友
+MATCH (ee:Person)-[:KNOWS]-(friends)
+WHERE ee.name = "Emil" RETURN ee, friends
+或者这个语句
+match p= (ee:Person)-[:KNOWS]-() 
+where ee.name="Emil" return p
+
+6.推荐查询：Johan的爱好是surfing，他想找到和他有一样爱好的人
+MATCH (js:Person)-[:KNOWS]-()-[:KNOWS]-(surfer)
+WHERE js.name = "Johan" AND surfer.hobby = "surfing"
+RETURN DISTINCT surfer
+
+
